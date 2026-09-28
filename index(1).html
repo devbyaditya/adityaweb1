@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillRoadmap - Learn & Grow</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#667085;
+  --primary:#5b5ce2;--primary2:#7c3aed;--border:#e6e8ef;
+  --success:#16a34a;--shadow:0 12px 35px rgba(31,41,55,.08)
+}
+body.dark{--bg:#0f1220;--card:#171b2e;--text:#f4f6ff;--muted:#a9b0c3;--border:#292e44;--shadow:0 12px 35px rgba(0,0,0,.25)}
+body{font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;transition:.25s}
+button,input{font:inherit}
+button{cursor:pointer;border:0}
+.container{width:min(1180px,92%);margin:auto}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-size:22px;font-weight:800;color:var(--primary)}
+.logo span{color:var(--text)}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.icon-btn{width:42px;height:42px;border-radius:12px;background:var(--bg);color:var(--text);border:1px solid var(--border)}
+.hero{padding:58px 0 35px;display:grid;grid-template-columns:1.5fr 1fr;gap:35px;align-items:center}
+.badge{display:inline-block;background:#ececff;color:var(--primary);padding:7px 12px;border-radius:999px;font-size:13px;font-weight:700;margin-bottom:15px}
+body.dark .badge{background:#252750}
+h1{font-size:clamp(36px,5vw,62px);line-height:1.05;letter-spacing:-2px;margin-bottom:18px}
+.hero p{font-size:18px;color:var(--muted);max-width:650px}
+.hero-card{background:linear-gradient(135deg,#5b5ce2,#7c3aed);color:white;padding:28px;border-radius:25px;box-shadow:var(--shadow)}
+.hero-card h3{font-size:23px;margin-bottom:10px}
+.progress-wrap{margin-top:22px}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px}
+.progress{height:10px;background:rgba(255,255,255,.25);border-radius:99px;overflow:hidden}
+.progress > div{height:100%;background:white;border-radius:99px;width:0;transition:.35s}
+.toolbar{display:flex;justify-content:space-between;gap:15px;align-items:center;margin:15px 0 25px;flex-wrap:wrap}
+.search{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0 14px;width:min(430px,100%)}
+.search input{width:100%;padding:13px 0;border:0;outline:0;background:transparent;color:var(--text)}
+.primary{background:var(--primary);color:white;padding:12px 17px;border-radius:12px;font-weight:700}
+.secondary{background:var(--card);color:var(--text);border:1px solid var(--border);padding:11px 15px;border-radius:12px;font-weight:600}
+.roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding-bottom:50px}
+.stage{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--shadow)}
+.stage-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.stage h2{font-size:21px}
+.level{font-size:11px;font-weight:800;padding:5px 9px;border-radius:8px;background:#eef2ff;color:var(--primary)}
+body.dark .level{background:#25294b}
+.skill-list{display:flex;flex-direction:column;gap:11px}
+.skill{border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;transition:.2s}
+.skill:hover{transform:translateY(-2px);border-color:var(--primary)}
+.check{width:22px;height:22px;border-radius:7px;border:2px solid #b8bfd0;display:grid;place-items:center;flex:none;color:white;font-size:13px}
+.skill.done .check{background:var(--success);border-color:var(--success)}
+.skill.done .check::after{content:"✓"}
+.skill.done .skill-name{text-decoration:line-through;color:var(--muted)}
+.skill-info{flex:1}
+.skill-name{font-weight:700}
+.skill-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.delete{color:var(--muted);background:transparent;font-size:17px;padding:4px}
+.empty{color:var(--muted);text-align:center;padding:20px 0}
+footer{border-top:1px solid var(--border);padding:25px 0;color:var(--muted);text-align:center}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;place-items:center;z-index:50;padding:20px}
+.modal.show{display:grid}
+.modal-box{width:min(440px,100%);background:var(--card);border-radius:20px;padding:25px}
+.modal-box h2{margin-bottom:18px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.field input,.field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:11px;background:var(--bg);color:var(--text);outline:none}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+@media(max-width:850px){.hero{grid-template-columns:1fr}.roadmap{grid-template-columns:1fr}}
+@media(max-width:520px){h1{letter-spacing:-1px}.hero{padding-top:35px}.nav{height:64px}.toolbar{align-items:stretch}.search{width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div class="logo">Skill<span>Roadmap</span></div>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">🌙</button>
+      <button class="secondary" id="resetBtn">Reset</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div>
+      <span class="badge">🚀 Personal Learning Planner</span>
+      <h1>Build skills.<br>Track progress.<br>Reach your goals.</h1>
+      <p>A simple roadmap to organize what you want to learn from beginner fundamentals to advanced projects.</p>
+    </div>
+    <div class="hero-card">
+      <h3>Your learning progress</h3>
+      <p id="progressText">0 of 12 skills completed</p>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Overall Progress</span><strong id="percent">0%</strong></div>
+        <div class="progress"><div id="progressBar"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <div class="search">🔎 <input id="search" placeholder="Search a skill..."></div>
+    <button class="primary" id="addBtn">＋ Add Skill</button>
+  </div>
+
+  <section class="roadmap" id="roadmap"></section>
+</main>
+
+<footer>
+  <div class="container">© 2026 SkillRoadmap • Learn consistently, one skill at a time.</div>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>Add a new skill</h2>
+    <div class="field">
+      <label>Skill name</label>
+      <input id="skillInput" placeholder="e.g. React.js">
+    </div>
+    <div class="field">
+      <label>Level</label>
+      <select id="levelInput">
+        <option value="Beginner">Beginner</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Advanced">Advanced</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Category</label>
+      <input id="categoryInput" placeholder="e.g. Web Development">
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" id="cancelBtn">Cancel</button>
+      <button class="primary" id="saveBtn">Add Skill</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const defaultSkills = [
+  {id:1,name:"HTML & Semantic Web",level:"Beginner",category:"Web Development",done:false},
+  {id:2,name:"CSS & Responsive Design",level:"Beginner",category:"Web Development",done:false},
+  {id:3,name:"JavaScript Fundamentals",level:"Beginner",category:"Programming",done:false},
+  {id:4,name:"Git & GitHub",level:"Beginner",category:"Tools",done:false},
+  {id:5,name:"JavaScript DOM & APIs",level:"Intermediate",category:"Programming",done:false},
+  {id:6,name:"React.js",level:"Intermediate",category:"Frontend",done:false},
+  {id:7,name:"Node.js & Express",level:"Intermediate",category:"Backend",done:false},
+  {id:8,name:"SQL & Databases",level:"Intermediate",category:"Backend",done:false},
+  {id:9,name:"REST API Development",level:"Advanced",category:"Backend",done:false},
+  {id:10,name:"Authentication & Security",level:"Advanced",category:"Full Stack",done:false},
+  {id:11,name:"Cloud Deployment",level:"Advanced",category:"DevOps",done:false},
+  {id:12,name:"Build a Real-World Project",level:"Advanced",category:"Projects",done:false}
+];
+
+let skills = JSON.parse(localStorage.getItem("skillRoadmapSkills")) || defaultSkills;
+let dark = localStorage.getItem("skillRoadmapDark") === "true";
+
+const roadmap = document.getElementById("roadmap");
+const search = document.getElementById("search");
+const modal = document.getElementById("modal");
+
+function save(){
+  localStorage.setItem("skillRoadmapSkills", JSON.stringify(skills));
+  updateProgress();
+}
+
+function updateProgress(){
+  const total=skills.length, completed=skills.filter(s=>s.done).length;
+  const pct=total ? Math.round(completed/total*100) : 0;
+  document.getElementById("progressText").textContent=`${completed} of ${total} skills completed`;
+  document.getElementById("percent").textContent=pct+"%";
+  document.getElementById("progressBar").style.width=pct+"%";
+}
+
+function render(){
+  const query=search.value.toLowerCase().trim();
+  const levels=["Beginner","Intermediate","Advanced"];
+  roadmap.innerHTML="";
+  levels.forEach(level=>{
+    const list=skills.filter(s=>s.level===level && 
+      (s.name.toLowerCase().includes(query)||s.category.toLowerCase().includes(query)));
+    const stage=document.createElement("div");
+    stage.className="stage";
+    stage.innerHTML=`
+      <div class="stage-head">
+        <h2>${level}</h2>
+        <span class="level">${list.length} skills</span>
+      </div>
+      <div class="skill-list"></div>`;
+    const container=stage.querySelector(".skill-list");
+    if(!list.length) container.innerHTML='<div class="empty">No skills found</div>';
+    list.forEach(skill=>{
+      const item=document.createElement("div");
+      item.className="skill"+(skill.done?" done":"");
+      item.innerHTML=`
+        <button class="check" aria-label="Complete skill"></button>
+        <div class="skill-info">
+          <div class="skill-name"></div>
+          <div class="skill-meta"></div>
+        </div>
+        <button class="delete" title="Delete skill">×</button>`;
+      item.querySelector(".skill-name").textContent=skill.name;
+      item.querySelector(".skill-meta").textContent=skill.category;
+      item.querySelector(".check").onclick=()=>{
+        skill.done=!skill.done; save(); render();
+      };
+      item.querySelector(".delete").onclick=()=>{
+        skills=skills.filter(s=>s.id!==skill.id); save(); render();
+      };
+      container.appendChild(item);
+    });
+    roadmap.appendChild(stage);
+  });
+  updateProgress();
+}
+
+document.getElementById("themeBtn").onclick=()=>{
+  dark=!dark;
+  document.body.classList.toggle("dark",dark);
+  document.getElementById("themeBtn").textContent=dark?"☀️":"🌙";
+  localStorage.setItem("skillRoadmapDark",dark);
+};
+
+document.getElementById("resetBtn").onclick=()=>{
+  if(confirm("Reset all progress and restore the default roadmap?")){
+    skills=defaultSkills.map(s=>({...s}));
+    save(); render();
+  }
+};
+
+document.getElementById("addBtn").onclick=()=>{
+  modal.classList.add("show");
+  document.getElementById("skillInput").focus();
+};
+document.getElementById("cancelBtn").onclick=()=>modal.classList.remove("show");
+modal.onclick=e=>{if(e.target===modal)modal.classList.remove("show")};
+
+document.getElementById("saveBtn").onclick=()=>{
+  const name=document.getElementById("skillInput").value.trim();
+  const level=document.getElementById("levelInput").value;
+  const category=document.getElementById("categoryInput").value.trim()||"General";
+  if(!name){alert("Please enter a skill name.");return}
+  skills.push({id:Date.now(),name,level,category,done:false});
+  save(); render();
+  document.getElementById("skillInput").value="";
+  document.getElementById("categoryInput").value="";
+  modal.classList.remove("show");
+};
+
+search.addEventListener("input",render);
+document.body.classList.toggle("dark",dark);
+document.getElementById("themeBtn").textContent=dark?"☀️":"🌙";
+render();
+</script>
+</body>
+</html>
